@@ -52,6 +52,18 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					})
 					$("#create-owner").html(html);
 
+					//将当前登录的用户，设置为下拉框默认的选项
+					/*
+					* <select id="create-owner">
+						<option value"06f5fc056eac41558a964f96daa7f27c">张三</option>
+						<option value"40f6cdea0bd34aceb77492a1656d9fb3">李四</option>
+
+					* </select>
+					*
+					* $("#create-owner").val("06f5fc056eac41558a964f96daa7f27c");
+					*
+					* */
+
 					//所有者下拉框处理完毕后,展现模态窗口
 					$("#createActivityModal").modal("show");
 				}

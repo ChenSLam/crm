@@ -8,6 +8,7 @@ import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.utils.SqlSessionUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 //业务层
 public class UserServiceImpl implements UserService {
@@ -49,5 +50,12 @@ public class UserServiceImpl implements UserService {
             throw new LoginException("IP地址受限");
         }
         return user;
+    }
+
+    @Override
+    public List<User> getUserList() {
+
+        List<User> uList = userDao.getUserList();
+        return uList;
     }
 }
