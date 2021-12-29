@@ -61,11 +61,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					* </select>
 					*
 					* $("#create-owner").val("06f5fc056eac41558a964f96daa7f27c");
-					*
+					*ssfsd
 					* */
 
 					//所有者下拉框处理完毕后,展现模态窗口
 					$("#createActivityModal").modal("show");
+
 				}
 			})
 		})
