@@ -27,5 +27,11 @@
 
         }
         })
+
+        //创建时间:当前系统时间
+        String createTime = DateTimeUtil.getSysTime();
+        //创建人:当前登陆的用户
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();//session里取user,再从user里取name
+
 </body>
 </html>

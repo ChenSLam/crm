@@ -51,6 +51,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>ActivityController</servlet-name>
-        <url-pattern>/workbench/activity/xxx.do</url-pattern>
+        <url-pattern>/workbench/activity/getUserList.do</url-pattern><!--获取User列表-->
+        <url-pattern>/workbench/activity/save.do</url-pattern><!--保存添加操作-->
     </servlet-mapping>
 </web-app>

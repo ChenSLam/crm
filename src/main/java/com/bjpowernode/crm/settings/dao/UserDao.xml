@@ -4,7 +4,9 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
       <!--  /*  #{loginAct}和#{loginPwd} 里面的loginAct Pwd是UserServiceImpl类中 Map 的key */-->
 <mapper namespace="com.bjpowernode.crm.settings.dao.UserDao">
-
+    <select id="getUserList" resultType="User">
+        select * from tbl_user
+    </select>
 	<select id="login" resultType="User">
 
         select * from tbl_user where loginAct=#{loginAct} and loginPwd=#{loginPwd}
