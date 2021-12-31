@@ -92,7 +92,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					"owner":$.trim($("#create-owner").val()),
 					"name":$.trim($("#create-name").val()),
 					"startDate":$.trim($("#create-startDate").val()),
-					"endDate":$.trim($("#create-endDate").val()),
+					"end1Date":$.trim($("#create-endDate").val()),
 					"cost":$.trim($("#create-cost").val()),
 					"description":$.trim($("#create-description").val())
 
@@ -134,8 +134,74 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				}
 			})
 		})
+
+        //页面加载完毕后触发一个方法
+        //默认展开第一页，每页两条数据
+        pageList(1,2);
+
+		//为查询按钮绑定事件，触发pageList方法
+        $("#searchBtn").click(function () {
+            pageList(1,2);
+        })
 	});
-	
+
+	/*
+	    对于所有的关系型数据库，做前端的分页相关操作的基础组件
+	    就是pageNo和pageSize
+	    pageNo:页码
+	    pageSize：每页展现的记录数
+
+	    pageList方法：发出ajax请求到后台，从后台取得最新的市场活动信息列表数据
+	                    通过响应回来的数据，局部刷新市场活动信息列表
+
+	    什么时候需要调用pageList方法
+	        1.点击左侧菜单中的“市场活动“超链接 需要刷新
+	        2.添加，修改，删除后，需要刷新市场活动列表
+	        3.点击查询按钮的时候
+	        4.点击分页组件的时候
+	* */
+
+	function pageList(pageNo,pageSize) {
+        $.ajax({
+            url:"workbench/activity/pageList.do",
+            data:{/*data就是给后台提供的参数*/
+                "pageNo" : pageNo,
+                "pageSize" : pageSize,
+                "name" : $.trim($("#search-name").val()),
+                "owner" : $.trim($("#search-owner").val()),
+                "startDate" : $.trim($("#search-startDate").val()),
+                "endDate" : $.trim($("#search-endDate").val())
+            },
+            type:"get",
+            dataType:"json",
+            success: function (data) {
+
+                /*后端提供给前端的信息
+                    data
+                        我们需要的:市场活动信息列表
+                        [{市场活动1},{2},{3}...] List<Activity> aList
+                        分页插件需要的:查询出来的总记录数
+                        {"total":100} int total
+
+                        {"total":100,"dataList":[{市场活动1},{2},{3}...]}
+                * */
+
+                var html ="";
+
+                $.each(data.dataList,function (i,n) {
+                    html +='<tr class="active">';
+                    html +='<td><input type="checkbox" value="'+n.id+'"/></td>';
+                    html +='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
+                    html +='<td>'+n.owner+'</td>';
+                    html +='<td>'+n.startDate+'</td>';
+                    html +='<td>'+n.end1Date+'</td>';
+                    html +='</tr>';
+                })
+                $("#activityBody").html(html);
+            }
+        })
+    }
+
 </script>
 </head>
 <body>
@@ -290,14 +356,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 
@@ -305,17 +371,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+					  <input class="form-control" type="text" id="search-startDate" />
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+					  <input class="form-control" type="text" id="search-endDate">
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" id="searchBtn" class="btn btn-default">查询</button>
 				  
 				</form>
 			</div>
@@ -354,8 +420,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr class="active">
+					<tbody id="activityBody">
+						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a></td>
                             <td>zhangsan</td>
@@ -368,7 +434,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             <td>zhangsan</td>
                             <td>2020-10-10</td>
                             <td>2020-10-20</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>

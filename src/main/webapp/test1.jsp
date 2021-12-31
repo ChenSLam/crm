@@ -19,7 +19,7 @@
         $.ajax({
         url:"",
         data:{
-
+                        <%--为后台传输的参数--%>
         },
         type:"",
         dataType:"json",
