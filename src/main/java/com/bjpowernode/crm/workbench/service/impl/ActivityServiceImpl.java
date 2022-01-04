@@ -15,9 +15,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public boolean save(Activity a) {
+        System.out.println("333333333333333333");
         boolean flag = true;
 
         int count = activityDao.save(a); //count受到影响的条数
+        System.out.println("44444444444444"+count);
         if (count!=1){
             flag = false;
         }

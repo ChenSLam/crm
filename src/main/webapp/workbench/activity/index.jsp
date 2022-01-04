@@ -159,6 +159,36 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
             pageList(1,2);
         })
+
+		//为全选的复选框绑定事件，触发全选操作
+		$("#qx").click(function () {
+
+			$("input[name=xz]").prop("checked",this.checked);
+
+		})
+
+		//以下做法是不行的,因为动态生成的元素,是不能够以普通绑定事件的形式来进行操作的
+		/*
+			$("input[name=xz]").click(function () {
+				alert(123);
+			})
+		*/
+
+
+		/*
+		*
+		* 动态生成的元素,要以on方法的形式来触发事件
+		*
+		* 语法:
+		* 	$(需要绑定元素的有效的外层元素).on(绑定事件的方式,需要绑定的元素的jquery对象,回调函数)
+		* */
+
+		$("#activityBody").on("click",$("input[name=xz]"),function () {
+
+			$("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked").length);
+		})
+
+
 	});
 
 	/*
@@ -214,7 +244,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                 $.each(data.dataList,function (i,n) {
                     html +='<tr class="active">';
-                    html +='<td><input type="checkbox" value="'+n.id+'"/></td>';
+                    html +='<td><input type="checkbox" name="xz" value="'+n.id+'"/></td>';
                     html +='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
                     html +='<td>'+n.owner+'</td>';
                     html +='<td>'+n.startDate+'</td>';
@@ -465,8 +495,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
-							<td>名称</td>
+							<td><input type="checkbox" id="qx" /></td>
+							<td>名称121</td>
                             <td>所有者</td>
 							<td>开始日期</td>
 							<td>结束日期</td>

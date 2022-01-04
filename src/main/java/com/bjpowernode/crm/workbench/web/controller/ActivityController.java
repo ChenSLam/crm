@@ -108,11 +108,12 @@ public class ActivityController extends HttpServlet {
         a.setDescription(description);
         a.setCreateTime(createTime);
         a.setCreateBy(createBy);
-
+        System.out.println("0000000000000000000");
         ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        System.out.println("11111111111111");
 
         boolean flag = as.save(a);
-
+        System.out.println("22222222222222222");
         PrintJson.printJsonFlag(response,flag);
 
     }
