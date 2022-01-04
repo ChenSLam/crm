@@ -39,7 +39,7 @@ public class ActivityController extends HttpServlet {
         String name = request.getParameter("name");
         String owner = request.getParameter("owner");
         String startDate = request.getParameter("startDate");
-        String endDate = request.getParameter("end1Date");
+        String endDate = request.getParameter("endDate");
         String pageNoStr = request.getParameter("pageNo");
         int pageNo = Integer.valueOf(pageNoStr);
         //每页展现的记录数

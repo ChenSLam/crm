@@ -36,6 +36,6 @@ public class ActivityServiceImpl implements ActivityService {
         vo.setTotal(total);
         vo.setDataList(dataList);
         //将vo返回
-        return null;
+        return vo;
     }
 }

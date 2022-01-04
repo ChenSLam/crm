@@ -16,7 +16,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
-<script type="text/javascript">
+	<link rel="stylesheet" type="text/css" href="jquery/bs_pagination/jquery.bs_pagination.min.css">
+	<script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
+	<script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
+	<script type="text/javascript">
 
 	$(function(){
 		
@@ -92,7 +95,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					"owner":$.trim($("#create-owner").val()),
 					"name":$.trim($("#create-name").val()),
 					"startDate":$.trim($("#create-startDate").val()),
-					"end1Date":$.trim($("#create-endDate").val()),
+					"endDate":$.trim($("#create-endDate").val()),
 					"cost":$.trim($("#create-cost").val()),
 					"description":$.trim($("#create-description").val())
 
@@ -128,6 +131,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 						//关闭添加操作的模态窗口
 						$("#createActivityModal").modal("hide");
+
 					}else {
 						alert("添加市场活动失败");
 					}
@@ -141,6 +145,16 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 		//为查询按钮绑定事件，触发pageList方法
         $("#searchBtn").click(function () {
+
+        	/*
+        	* 点击查询按钮的时候，应该将搜索框中的信息保存起来,保存到隐藏域中
+        	* */
+
+			$("#hidden-name").val($.trim($("#search-name").val()));
+			$("#hidden-owner").val($.trim($("#search-owner").val()));
+			$("#hidden-starDate").val($.trim($("#search-startDate").val()));
+			$("#hidden-endDate").val($.trim($("#search-endDate").val()));
+
             pageList(1,2);
         })
 	});
@@ -162,6 +176,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	* */
 
 	function pageList(pageNo,pageSize) {
+
+		//查询前,将隐藏域中保存的信息取出来,重新赋予到搜索框中
+		$("#search-name").val($.trim($("#hidden-name").val()));
+		$("#search-owner").val($.trim($("#hidden-owner").val()));
+		$("#search-startDate").val($.trim($("#hidden-starDate").val()));
+		$("#search-endDate").val($.trim($("#hidden-endDate").val()));
+
         $.ajax({
             url:"workbench/activity/pageList.do",
             data:{/*data就是给后台提供的参数*/
@@ -194,17 +215,45 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     html +='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
                     html +='<td>'+n.owner+'</td>';
                     html +='<td>'+n.startDate+'</td>';
-                    html +='<td>'+n.end1Date+'</td>';
+                    html +='<td>'+n.endDate+'</td>';
                     html +='</tr>';
                 })
                 $("#activityBody").html(html);
-            }
+
+                //计算总页数
+				var totalPages = data.total%pageSize==0?data.total/pageSize:parseInt(data.total/pageSize)+1;//parseInt是转换成数字，再加1
+				//数据处理完毕后，结合分页插件，对前端展现分页信息
+				$("#activityPage").bs_pagination({
+					currentPage: pageNo, // 页码
+					rowsPerPage: pageSize, // 每页显示的记录条数
+					maxRowsPerPage: 20, // 每页最多显示的记录条数
+					totalPages: totalPages, // 总页数
+					totalRows: data.total, // 总记录条数
+
+					visiblePageLinks: 3, // 显示几个卡片
+
+					showGoToPage: true,
+					showRowsPerPage: true,
+					showRowsInfo: true,
+					showRowsDefaultInfo: true,
+
+					onChangePage : function(event, data){
+						pageList(data.currentPage , data.rowsPerPage);
+					}
+				});
+
+			}
         })
     }
 
 </script>
 </head>
 <body>
+
+	<input type="hidden" id="hidden-name">
+	<input type="hidden" id="hidden-owner">
+	<input type="hidden" id="hidden-starDate">
+	<input type="hidden" id="hidden-endDate">
 
 	<!-- 创建市场活动的模态窗口 -->
 	<div class="modal fade" id="createActivityModal" role="dialog">
@@ -440,38 +489,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			
 			<div style="height: 50px; position: relative;top: 30px;">
-				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
-				</div>
-				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
-					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							10
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">20</a></li>
-							<li><a href="#">30</a></li>
-						</ul>
-					</div>
-					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
-				</div>
-				<div style="position: relative;top: -88px; left: 285px;">
-					<nav>
-						<ul class="pagination">
-							<li class="disabled"><a href="#">首页</a></li>
-							<li class="disabled"><a href="#">上一页</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">下一页</a></li>
-							<li class="disabled"><a href="#">末页</a></li>
-						</ul>
-					</nav>
-				</div>
+				<div id="activityPage"></div>
 			</div>
 			
 		</div>
