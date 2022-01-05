@@ -11,6 +11,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
+    <script type="application/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
@@ -188,7 +189,50 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			$("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked").length);
 		})
 
+		//为删除按钮绑定事件,执行市场活动删除操作
+		$("#deleteBtn").click(function () {
+			//找到复选框中所有打勾✔的复选框的jQuery
+			var $xz = $("input[name=xz]:checked");
+			if ($xz.length==0){
+				alert("请选择需要删除的记录");
+				//打勾了,可能是一条,可能是多条
+			}else {
+				//url:workbench/activity/delete.do?id=xxx&id=xxx&id=xxx
 
+				//拼接参数
+				var param = "";
+
+				//将$xz中的每一个dom对象遍历出来,取其value值,就相当于取得了需要删除的记录id
+				for (var i=0;i<$xz.length;i++){
+					param += "id=" + $($xz[i]).val();
+					//如果不是最后一条记录,需要在后面追加一个&符
+					if (i<$xz.length-1){
+						param +="&";
+					}
+				}
+				//alert(param);
+				$.ajax({
+					url:"workbench/activity/delete.do",
+					data:param,	/*为后台传输的参数*/
+					type:"post",
+					dataType:"json",
+					success: function (data) {
+						/*后台为前台返回的参数*/
+						/*
+						* data
+						* 	{"success":true/false}
+						* */
+						if (data.success){
+							//删除成功后
+							pageList(1,2);
+						}else {
+							alert("删除失败")
+						}
+					}
+				})
+			}
+
+		})
 	});
 
 	/*
@@ -208,6 +252,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	* */
 
 	function pageList(pageNo,pageSize) {
+
+		//将全选的复选框的✔去掉
+		$("#qx").prop("checked",false);
 
 		//查询前,将隐藏域中保存的信息取出来,重新赋予到搜索框中
 		//解决条件框有内容,没点查询,就点下一页时候,查询到条件框的内容
@@ -487,7 +534,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					-->
 				  <button type="button" class="btn btn-primary" id="addBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>

@@ -40,4 +40,10 @@ public class ActivityServiceImpl implements ActivityService {
         //将vo返回
         return vo;
     }
+
+    @Override
+    public boolean delete(String[] ids) {
+        //查询出需要删除的备注的数量
+        return false;
+    }
 }

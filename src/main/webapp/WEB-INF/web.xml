@@ -54,5 +54,6 @@
         <url-pattern>/workbench/activity/getUserList.do</url-pattern><!--获取User列表-->
         <url-pattern>/workbench/activity/save.do</url-pattern><!--保存添加操作-->
         <url-pattern>/workbench/activity/pageList.do</url-pattern><!--查询操作-->
+        <url-pattern>/workbench/activity/delete.do</url-pattern><!--删除操作-->
     </servlet-mapping>
 </web-app>
