@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ActivityController extends HttpServlet {
+    //前端要什么,控制层就要管业务层要什么
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("进入到市场活动控制器");
@@ -32,12 +33,39 @@ public class ActivityController extends HttpServlet {
             pageList(request,response);
         }else if ("/workbench/activity/delete.do".equals(path)){
             delete(request,response);
+        }else if ("/workbench/activity/getUserListAndActivity.do".equals(path)){
+            getUserListAndActivity(request,response);
         }
+    }
+
+    private void getUserListAndActivity(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("进入到查询用户信息列表和根据市场活动id查询单挑记录");
+        String id = request.getParameter("id");
+        //前端要什么,控制层就要管业务层要什么
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        /*
+             总结:
+                controller调用service的方法,返回值应该是什么
+                  想一想前端要什么,就要从service层取什么
+
+              前端需要的,管业务层去要
+
+         *   uList
+         *   a
+         *
+                以上两项信息,复用率不高,选择使用map打包这两项信息即可
+         *   map
+         * */
+        Map<String,Object> map = as.getUserListAndActivity(id);
+
+        PrintJson.printJsonObj(response,map);
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("执行市场活动的删除操作");
         String ids[] = request.getParameterValues("id");
+        //前端要什么,控制层就要管业务层要什么
         ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
         boolean flag = as.delete(ids);
         PrintJson.printJsonFlag(response,flag);
@@ -64,7 +92,7 @@ public class ActivityController extends HttpServlet {
         map.put("endDate",endDate);
         map.put("skipCount",skipCount);
         map.put("pageSize",pageSize);
-
+        //前端要什么,控制层就要管业务层要什么
         ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
         /*
         * 前端要:市场活动信息列表

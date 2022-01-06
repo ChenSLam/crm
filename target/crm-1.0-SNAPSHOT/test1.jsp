@@ -24,7 +24,7 @@
         type:"",
         dataType:"json",
         success: function (data) {
-
+                        <%--后台为前台返回的参数--%>
         }
         })
 
