@@ -112,6 +112,22 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					if (data.success){
 						//添加成功后
 						//刷新市场活动信息列表(局部刷新)
+						//pageList(1,2);
+
+						/*
+						* 	$("#activityPage").bs_pagination('getOption', 'currentPage'):
+						* 		操作后停留在当前页
+						*
+						* 	$("#activityPage").bs_pagination('getOption', 'rowsPerPage')：
+						* 		操作后维持已经设置好的每页展现的记录数
+						*
+						* 	这两个参数不需要我们进行任何修改
+						* 		直接使用
+						*
+						* */
+
+						//做完添加操作后，应该回到首页，维持每页展现的记录数
+						pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
 
 						//清空添加操作模态窗口中的数据
 						/*
@@ -273,19 +289,71 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							html += "<option value='"+n.id+"'>"+n.name+"</option>"
 						})
 						$("#edit-owner").html(html);
-
 						//处理单条activity
-						$("$edit-id").val(data.a.id);
-						$("$edit-name").val(data.a.name);
-						$("$edit-owner").val(data.a.owner);
-						$("$edit-starDate").val(data.a.starDate);
-						$("$edit-endDate").val(data.a.endDate);
-						$("$edit-cost").val(data.a.cost);
+						$("#edit-id").val(data.a.id);
+						$("#edit-name").val(data.a.name);
+						$("#edit-owner").val(data.a.owner);
+						$("#edit-startDate").val(data.a.startDate);
+						$("#edit-endDate").val(data.a.endDate);
+						$("#edit-cost").val(data.a.cost);
+						$("#edit-description").val(data.a.description);
 
+						$("#editActivityModal").modal("show");
 					}
 				})
 			}
 		})
+
+		//为更新按钮绑定事件，执行市场活动的修改操作
+		/*
+			在实际项目开发中，一定是按照先做添加，再做修改的这种顺序
+			所以，为了节省开发时间，修改操作一般都是copy添加操作
+		 */
+		$("#updateBtn").click(function () {
+
+			$.ajax({
+				url:"workbench/activity/update.do",
+				data:{
+					"id":$.trim($("#edit-id").val()),
+					"owner":$.trim($("#edit-owner").val()),
+					"name":$.trim($("#edit-name").val()),
+					"startDate":$.trim($("#edit-startDate").val()),
+					"endDate":$.trim($("#edit-endDate").val()),
+					"cost":$.trim($("#edit-cost").val()),
+					"description":$.trim($("#edit-description").val())
+
+				},
+				type:"post",
+				dataType:"json",
+				success: function (data) {
+
+					/*
+					* data
+					* 	{"success":true/false}
+					* */
+					if (data.success){
+						//修改成功后
+						//刷新市场活动信息列表(局部刷新)
+						/*
+						*
+						* 修改操作后，应该维持在当前页，维持展现的记录数
+						*
+						* */
+						pageList($("#activityPage").bs_pagination('getOption', 'currentPage')
+								,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
+
+						//关闭修改操作的模态窗口
+						$("#editActivityModal").modal("hide");
+
+					}else {
+						alert("修改市场活动失败");
+					}
+				}
+			})
+
+		})
+
 	});
 
 	/*
@@ -340,7 +408,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                         {"total":100,"dataList":[{市场活动1},{2},{3}...]}
                 * */
 
-                var html ="<option></option>";
+                var html ="";
 
 
                 $.each(data.dataList,function (i,n) {/*dataList为后端返回给前端的数据*/

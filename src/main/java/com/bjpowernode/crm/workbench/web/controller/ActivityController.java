@@ -35,7 +35,39 @@ public class ActivityController extends HttpServlet {
             delete(request,response);
         }else if ("/workbench/activity/getUserListAndActivity.do".equals(path)){
             getUserListAndActivity(request,response);
+        }else if ("/workbench/activity/update.do".equals(path)){
+            update(request,response);
         }
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("执行市场活动修改操作");
+        String id  = request.getParameter("id");
+        String owner = request.getParameter("owner");//此处的"owner"从前端拿，index.jsp中$.ajax  data{}里的数据 也就是"owner":$.trim($("#create-owner").val()),中的"owner"
+        String name = request.getParameter("name");//从前端拿，index.jsp中$.ajax  data{}里的数据
+        String startDate = request.getParameter("startDate");//从前端拿，index.jsp中$.ajax  data{}里的数据
+        String endDate = request.getParameter("endDate");//从前端拿，index.jsp中$.ajax  data{}里的数据
+        String cost = request.getParameter("cost");//从前端拿，index.jsp中$.ajax  data{}里的数据
+        String description = request.getParameter("description");//从前端拿，index.jsp中$.ajax  data{}里的数据
+        //修改时间:当前系统时间
+        String editTime = DateTimeUtil.getSysTime();
+        //修改人:当前登陆的用户
+        String editBy = ((User)request.getSession().getAttribute("user")).getName();//session里取user,再从user里取name
+
+        Activity a = new Activity();
+        a.setId(id);
+        a.setOwner(owner);
+        a.setName(name);
+        a.setStartDate(startDate);
+        a.setEndDate(endDate);
+        a.setCost(cost);
+        a.setDescription(description);
+        a.setEditBy(editBy);
+        a.setEditTime(editTime);
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        boolean flag = as.update(a);
+        PrintJson.printJsonFlag(response,flag);
     }
 
     private void getUserListAndActivity(HttpServletRequest request, HttpServletResponse response) {

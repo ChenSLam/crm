@@ -53,6 +53,7 @@
         <servlet-name>ActivityController</servlet-name>
         <url-pattern>/workbench/activity/getUserList.do</url-pattern><!--获取User列表-->
         <url-pattern>/workbench/activity/save.do</url-pattern><!--保存添加操作-->
+        <url-pattern>/workbench/activity/update.do</url-pattern><!--保存添加操作-->
         <url-pattern>/workbench/activity/pageList.do</url-pattern><!--查询操作-->
         <url-pattern>/workbench/activity/delete.do</url-pattern><!--删除操作-->
         <url-pattern>/workbench/activity/getUserListAndActivity.do</url-pattern><!--修改查询操作  查询用户信息列表和根据市场活动id查询单挑记录-->

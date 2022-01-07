@@ -71,7 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
         //取uList
         List<User> uList = userDao.getUserList();
         //取a
-        Activity a = activityDao.getById();
+        Activity a = activityDao.getById(id);
         //将uList和a打包到map中
         Map<String,Object> map = new HashMap<String, Object>();
         map.put("uList",uList);//"uList"是前端index.jsp data里接收的uList
@@ -79,5 +79,15 @@ public class ActivityServiceImpl implements ActivityService {
         //返回map就可以了
 
         return map;
+    }
+
+    @Override
+    public boolean update(Activity a) {
+        boolean flag = true;
+        int count = activityDao.update(a); //count受到影响的条数
+        if (count!=1){
+            flag = false;
+        }
+        return flag;
     }
 }
