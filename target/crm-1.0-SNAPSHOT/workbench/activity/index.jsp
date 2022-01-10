@@ -242,7 +242,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             * */
 							if (data.success){
 								//删除成功后
-								pageList(1,2);
+								pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
 							}else {
 								alert("删除失败")
 							}
@@ -414,7 +415,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                 $.each(data.dataList,function (i,n) {/*dataList为后端返回给前端的数据*/
                     html +='<tr class="active">';
                     html +='<td><input type="checkbox" name="xz" value="'+n.id+'"/></td>';
-                    html +='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">'+n.name+'</a></td>';
+                    html +='<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.do?id='+n.id+'\';">'+n.name+'</a></td>';
                     html +='<td>'+n.owner+'</td>';
                     html +='<td>'+n.startDate+'</td>';
                     html +='<td>'+n.endDate+'</td>';

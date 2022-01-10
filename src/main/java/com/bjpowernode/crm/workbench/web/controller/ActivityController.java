@@ -6,6 +6,7 @@ import com.bjpowernode.crm.settings.service.impl.UserServiceImpl;
 import com.bjpowernode.crm.utils.*;
 import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import com.bjpowernode.crm.workbench.service.impl.ActivityServiceImpl;
 
@@ -37,7 +38,77 @@ public class ActivityController extends HttpServlet {
             getUserListAndActivity(request,response);
         }else if ("/workbench/activity/update.do".equals(path)){
             update(request,response);
+        }else if ("/workbench/activity/detail.do".equals(path)){
+            detail(request,response);
+        }else if ("/workbench/activity/getRemarkListByAid.do".equals(path)){
+            getRemarkListByAid(request,response);
+        }else if ("/workbench/activity/deleteRemark.do".equals(path)){
+            deleteRemark(request,response);
+        }else if ("/workbench/activity/saveRemark.do".equals(path)){
+            saveRemark(request,response);
         }
+    }
+
+    private void saveRemark(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("添加备注操作");
+        String noteContext = request.getParameter("noteContext");
+        String activityId = request.getParameter("activityId");
+        String id = UUIDUtil.getUUID();
+        //创建时间:当前系统时间
+        String createTime = DateTimeUtil.getSysTime();
+        //创建人:当前登陆的用户
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();//session里取user,再从user里取name
+        String editFlag = "0";
+
+        ActivityRemark ar = new ActivityRemark();
+        ar.setId(id);
+        ar.setNoteContent(noteContext);
+        ar.setActivityId(activityId);
+        ar.setCreateBy(createBy);
+        ar.setCreateTime(createTime);
+        ar.setEditFlag(editFlag);
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = as.saveRemark(ar);
+
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("ar",ar);
+        map.put("success",flag);
+
+        PrintJson.printJsonObj(response,map);
+
+    }
+
+    private void deleteRemark(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("删除备注操作");
+        String id = request.getParameter("id");
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = as.deleteRemark(id);
+        PrintJson.printJsonFlag(response,flag);
+
+    }
+
+    private void getRemarkListByAid(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("根据市场活动的id,取得备注信息列表");
+
+        String activityId = request.getParameter("activityId");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        List<ActivityRemark> arList = as.getRemarkListByAid(activityId);
+        PrintJson.printJsonObj(response,arList);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("进入到跳转到详细信息页的操作");
+        String id = request.getParameter("id");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        Activity a = as.detail(id);
+        //重定向、转发，使用转发
+        //a保存到request域，能用小的域，就不用大的域，作用域从小到大，能小就小
+        request.setAttribute("a",a);
+        //request重定向不好使，用转发比较合适
+        request.getRequestDispatcher("/workbench/activity/detail.jsp").forward(request,response);//抛异常
     }
 
     private void update(HttpServletRequest request, HttpServletResponse response) {
