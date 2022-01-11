@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 public class ActivityController extends HttpServlet {
     //前端要什么,控制层就要管业务层要什么
@@ -46,12 +47,35 @@ public class ActivityController extends HttpServlet {
             deleteRemark(request,response);
         }else if ("/workbench/activity/saveRemark.do".equals(path)){
             saveRemark(request,response);
+        }else if ("/workbench/activity/updateRemark.do".equals(path)){
+            updateRemark(request,response);
         }
+    }
+
+    private void updateRemark(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("备注修改操作===========================");
+        String id = request.getParameter("id");
+        String noteContent = request.getParameter("noteContent");
+        String editTime = DateTimeUtil.getSysTime();
+        String editBy = ((User)request.getSession().getAttribute("user")).getName();
+        String editFlag = "1";
+        ActivityRemark ar = new ActivityRemark();
+        ar.setEditFlag(editFlag);
+        ar.setId(id);
+        ar.setNoteContent(noteContent);
+        ar.setEditBy(editBy);
+        ar.setEditTime(editTime);
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = as.updateRemark(ar);
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("ar",ar);
+        map.put("success",flag);
+        PrintJson.printJsonObj(response,map);
     }
 
     private void saveRemark(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("添加备注操作");
-        String noteContext = request.getParameter("noteContext");
+        String noteContext = request.getParameter("noteContent");
         String activityId = request.getParameter("activityId");
         String id = UUIDUtil.getUUID();
         //创建时间:当前系统时间
