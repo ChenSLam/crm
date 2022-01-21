@@ -27,6 +27,17 @@
                         <%--后台为前台返回的参数--%>
         }
         })
+<%--日历控件--%>
+        $(".time").datetimepicker({
+        minView: "month",
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayBtn: true,
+        pickerPosition: "bottom-left"
+        });
+
+
 
         //创建时间:当前系统时间
         String createTime = DateTimeUtil.getSysTime();
